@@ -1,0 +1,26 @@
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import wordnet
+
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('wordnet')
+
+def morphological_analysis(sentence):
+    tokens = word_tokenize(sentence)  
+    tagged_tokens = nltk.pos_tag(tokens) 
+    for token, pos_tag in tagged_tokens:
+        print("Token:", token)
+        print("POS Tag:", pos_tag)
+        synsets = wordnet.synsets(token) 
+        if synsets:
+            for synset in synsets:
+                print("Lemma:", synset.lemmas()[0].name()) 
+                print("Definition:", synset.definition()) 
+                print("Examples:", synset.examples())  
+        print("\n")
+
+
+sentence = "The quick brown fox jumps over the lazy dog"
+
+morphological_analysis(sentence)
