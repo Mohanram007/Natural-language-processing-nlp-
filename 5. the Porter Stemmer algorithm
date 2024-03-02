@@ -1,0 +1,11 @@
+import nltk
+from nltk.stem import PorterStemmer
+
+porter_stemmer = PorterStemmer()
+
+words = ["running", "easily", "cats", "trouble", "bought", "used", "caresses", "flies", "dies", "denied", "agreed", "owned", "humbled", "sized", "meeting", "stating", "siezing", "itemization", "sensational", "traditional", "reference", "colonizer", "plotted"]
+
+stemmed_words = [porter_stemmer.stem(word) for word in words]
+
+for original, stemmed in zip(words, stemmed_words):
+    print(f"{original.ljust(15)} -> {stemmed}")
