@@ -1,0 +1,21 @@
+
+transformation_rules = [
+    ({"NN": "VB"}, "dog", "VB"),    
+    ({"JJ": "VB"}, "quick", "VB"),  
+    ({"JJ": "RB"}, "brown", "RB"),  
+]
+
+
+tagged_sentence = [("The", "DET"), ("quick", "JJ"), ("brown", "JJ"), ("dog", "NN"), ("jumps", "VB"), ("over", "IN"), ("the", "DET"), ("lazy", "JJ"), ("dog", "NN")]
+
+
+for i in range(len(tagged_sentence)):
+    word, pos_tag = tagged_sentence[i]
+    for rule in transformation_rules:
+        rule_condition, word_to_change, new_pos_tag = rule
+        if pos_tag in rule_condition and word == word_to_change:
+            tagged_sentence[i] = (word, new_pos_tag)
+            break
+
+print("Tagged sentence after transformation-based tagging:")
+print(tagged_sentence)
