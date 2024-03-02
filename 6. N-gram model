@@ -1,0 +1,30 @@
+import random
+
+def create_bigram_model(text):
+    words = text.split()
+    bigram_model = {}
+    for i in range(len(words)-1):
+        current_word = words[i]
+        next_word = words[i+1]
+        if current_word in bigram_model:
+            bigram_model[current_word].append(next_word)
+        else:
+            bigram_model[current_word] = [next_word]
+    return bigram_model
+
+def generate_text(bigram_model, length=10):
+    current_word = random.choice(list(bigram_model.keys()))
+    text = current_word
+    for _ in range(length-1):
+        if current_word in bigram_model:
+            next_word = random.choice(bigram_model[current_word])
+            text += ' ' + next_word
+            current_word = next_word
+        else:
+            break
+    return text
+
+text = "The quick brown fox jumps over the lazy dog"
+bigram_model = create_bigram_model(text)
+generated_text = generate_text(bigram_model, length=15)
+print("Generated text:", generated_text)
