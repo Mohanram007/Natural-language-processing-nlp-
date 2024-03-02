@@ -1,0 +1,27 @@
+class PluralFiniteStateMachine:
+    def __init__(self):
+        self.states = {'singular', 'plural'}
+        self.transitions = {
+            ('singular', 's'): 'plural',
+            ('plural', 's'): 'plural'
+        }
+        self.start_state = 'singular'
+
+    def generate_plural(self, noun):
+        current_state = self.start_state
+        plural = noun
+        for char in noun[::-1]:
+            next_state = self.transitions.get((current_state, char), None)
+            if next_state == 'plural':
+                plural += 'es'  # Add 'es' for plural
+            else:
+                plural += 's'   # Add 's' for plural
+                break
+        return plural
+
+
+noun_fsm = PluralFiniteStateMachine()
+
+nouns = ['cat', 'dog', 'book', 'bus', 'baby', 'family']
+for noun in nouns:
+    print(f"Singular: {noun}, Plural: {noun_fsm.generate_plural(noun)}")
