@@ -1,0 +1,38 @@
+import random
+
+transition_probs = {
+    'NOUN': {'NOUN': 0.4, 'VERB': 0.3, 'ADJ': 0.2, 'ADV': 0.1},
+    'VERB': {'NOUN': 0.3, 'VERB': 0.4, 'ADJ': 0.2, 'ADV': 0.1},
+    'ADJ': {'NOUN': 0.2, 'VERB': 0.3, 'ADJ': 0.4, 'ADV': 0.1},
+    'ADV': {'NOUN': 0.1, 'VERB': 0.2, 'ADJ': 0.3, 'ADV': 0.4},
+}
+
+
+emission_probs = {
+    'NOUN': {'cat': 0.4, 'dog': 0.3, 'house': 0.2, 'car': 0.1},
+    'VERB': {'runs': 0.3, 'eats': 0.3, 'sleeps': 0.2, 'drives': 0.2},
+    'ADJ': {'big': 0.4, 'small': 0.3, 'fast': 0.2, 'slow': 0.1},
+    'ADV': {'quickly': 0.3, 'slowly': 0.3, 'happily': 0.2, 'sadly': 0.2},
+}
+
+
+def stochastic_pos_tagging(sentence):
+    tagged_sentence = []
+    prev_tag = None
+    for word in sentence:
+        if prev_tag is None:
+            tag = random.choice(list(transition_probs.keys()))  
+        else:
+            tag_probs = transition_probs[prev_tag]
+            tag = random.choices(list(tag_probs.keys()), list(tag_probs.values()))[0]  
+        tagged_sentence.append((word, tag))
+        prev_tag = tag
+    return tagged_sentence
+
+
+sentence = ["The", "quick", "brown", "fox", "jumps", "over", "the", "lazy", "dog"]
+
+
+tagged_sentence = stochastic_pos_tagging(sentence)
+print("Stochastic part-of-speech tagged sentence:")
+print(tagged_sentence)
