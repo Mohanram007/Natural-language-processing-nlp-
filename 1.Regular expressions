@@ -1,0 +1,14 @@
+import re
+
+text = "This is a sample text with some numbers like 12345 and email addresses like user@example.com."
+number_pattern = r'\d+'
+
+numbers = re.findall(number_pattern, text)
+
+print("Numbers found:", numbers)
+
+email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+
+emails = re.findall(email_pattern, text)
+
+print("Email addresses found:", emails)
