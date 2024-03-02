@@ -1,0 +1,28 @@
+import re
+
+pos_patterns = [
+    (r'\b(?:the|a|an)\b', 'DET'),           
+    (r'\b(?:is|are|was|were)\b', 'VERB'),   
+    (r'\b(?:quick|brown|lazy)\b', 'ADJ'),   
+    (r'\b(?:fox|dog)\b', 'NOUN'),          
+    (r'\b(?:jumps|runs|sleeps)\b', 'VERB'), 
+]
+
+
+def rule_based_pos_tagging(sentence):
+    tagged_sentence = []
+    for word in sentence:
+        for pattern, pos_tag in pos_patterns:
+            if re.match(pattern, word):
+                tagged_sentence.append((word, pos_tag))
+                break
+        else:
+            tagged_sentence.append((word, 'UNK')) 
+    return tagged_sentence
+
+
+sentence = ["The", "quick", "brown", "fox", "jumps", "over", "the", "lazy", "dog"]
+
+tagged_sentence = rule_based_pos_tagging(sentence)
+print("Rule-based part-of-speech tagged sentence:")
+print(tagged_sentence)
