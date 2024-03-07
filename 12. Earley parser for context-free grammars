@@ -1,0 +1,74 @@
+class EarleyParser:
+    def __init__(self, grammar):
+        self.grammar = grammar
+        self.chart = []
+
+    def predict(self, state):
+        next_symbol = state["production"][state["dot"]]
+        if next_symbol in self.grammar:
+            for production in self.grammar[next_symbol]:
+                new_state = {"production": production, "dot": 0, "start": state["start"], "end": state["start"]}
+                self.chart.append(new_state)
+
+    def scan(self, state, token):
+        next_symbol = state["production"][state["dot"]]
+        if next_symbol == token:
+            new_state = {"production": state["production"], "dot": state["dot"] + 1, "start": state["start"],
+                         "end": state["end"] + 1}
+            self.chart.append(new_state)
+
+    def complete(self, state):
+        for st in self.chart:
+            next_symbol = st["production"][st["dot"]]
+            if next_symbol == state["production"][state["dot"]] and st["end"] == state["start"]:
+                new_state = {"production": st["production"], "dot": st["dot"] + 1, "start": st["start"],
+                             "end": state["end"]}
+                self.chart.append(new_state)
+
+    def parse(self, input_tokens):
+        start_rule = {"production": ["S", "expr"], "dot": 0, "start": 0, "end": 0}
+        self.chart.append(start_rule)
+
+        for i, token in enumerate(input_tokens):
+            for state in self.chart[:]:
+                if state["dot"] < len(state["production"]):
+                    next_symbol = state["production"][state["dot"]]
+                    if next_symbol in self.grammar:
+                        self.predict(state)
+                    elif state["dot"] < len(state["production"]) and next_symbol == token:
+                        self.scan(state, token)
+
+            while True:
+                added = False
+                for state in self.chart[:]:
+                    if state["dot"] == len(state["production"]):
+                        self.complete(state)
+                        added = True
+
+                if not added:
+                    break
+
+        for state in self.chart:
+            if state["production"] == ["S", "expr"] and state["dot"] == 2 and state["end"] == len(input_tokens):
+                return True
+
+        return False
+
+# Example usage:
+grammar = {
+    "S": [["expr"]],
+    "expr": [["term", "+", "expr"], ["term"]],
+    "term": [["factor", "*", "term"], ["factor"]],
+    "factor": [["(", "expr", ")"], ["number"]],
+    "number": [["0"], ["1"], ["2"], ["3"], ["4"], ["5"], ["6"], ["7"], ["8"], ["9"]]
+}
+
+parser = EarleyParser(grammar)
+
+input_tokens = ["1", "+", "2", "*", "3"]
+result = parser.parse(input_tokens)
+
+if result:
+    print("Parsing successful!")
+else:
+    print("Parsing failed!")
