@@ -1,0 +1,42 @@
+import spacy
+from gensim.models import KeyedVectors
+from sklearn.metrics.pairwise import cosine_similarity
+
+# Load spaCy model and Word2Vec model (pre-trained embeddings)
+nlp = spacy.load("en_core_web_sm")
+word_vectors = KeyedVectors.load_word2vec_format('path/to/your/word2vec_model.bin', binary=True)
+
+def sentence_embedding(sentence):
+    # Tokenize and lemmatize words in the sentence
+    tokens = [token.lemma_ for token in nlp(sentence) if not token.is_punct]
+
+    # Filter out stopwords
+    tokens = [token for token in tokens if not token.is_stop]
+
+    # Get the average word vector for the sentence
+    vectors = [word_vectors[token] for token in tokens if token in word_vectors]
+    if vectors:
+        return sum(vectors) / len(vectors)
+    else:
+        return None
+
+def evaluate_coherence(text):
+    sentences = [sentence.text for sentence in nlp(text).sents]
+
+    # Calculate sentence embeddings
+    embeddings = [sentence_embedding(sentence) for sentence in sentences]
+
+    # Calculate pairwise cosine similarity between sentence embeddings
+    similarity_matrix = cosine_similarity(embeddings)
+
+    # Calculate coherence score based on average similarity
+    coherence_score = (similarity_matrix.sum() - len(sentences)) / (len(sentences) * (len(sentences) - 1))
+
+    return coherence_score
+
+# Example usage:
+input_text = "Natural language processing (NLP) is a subfield of artificial intelligence. It focuses on enabling computers to understand, interpret, and generate human language. NLP involves a combination of linguistics and computer science. Applications of NLP include machine translation, sentiment analysis, and chatbots."
+
+coherence_score = evaluate_coherence(input_text)
+
+print("Coherence Score:", coherence_score)
