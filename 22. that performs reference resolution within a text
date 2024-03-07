@@ -1,0 +1,46 @@
+import nltk
+from nltk.chunk import ne_chunk
+from nltk.tag import pos_tag
+from nltk.tokenize import word_tokenize, sent_tokenize
+
+nltk.download('punkt')
+nltk.download('maxent_ne_chunker')
+nltk.download('words')
+
+def reference_resolution(text):
+    sentences = sent_tokenize(text)
+
+    for sentence in sentences:
+        words = word_tokenize(sentence)
+        tagged_words = pos_tag(words)
+        chunked_sentence = ne_chunk(tagged_words)
+
+        for subtree in chunked_sentence.subtrees():
+            if subtree.label() == 'NP' and len(subtree) > 1:
+                # If the subtree is a noun phrase with more than one word
+                antecedent = find_antecedent(subtree)
+                replace_pronouns(subtree, antecedent)
+
+    resolved_text = ' '.join([' '.join([word[0] for word in sent]) for sent in chunked_sentence])
+    return resolved_text
+
+def find_antecedent(subtree):
+    for word, tag in subtree:
+        if tag.startswith('N'):
+            return word
+
+def replace_pronouns(subtree, antecedent):
+    for i, (word, tag) in enumerate(subtree):
+        if tag.startswith('PRP') and word.lower() not in ('he', 'she', 'it'):
+            # Replace the pronoun with its antecedent
+            subtree[i] = (antecedent, 'NN')
+
+# Example usage:
+input_text = "John saw a cat. He fed it. The cat was hungry."
+
+resolved_text = reference_resolution(input_text)
+
+print("Original Text:")
+print(input_text)
+print("\nResolved Text:")
+print(resolved_text)
