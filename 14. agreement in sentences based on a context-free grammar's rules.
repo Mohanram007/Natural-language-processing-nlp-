@@ -1,0 +1,70 @@
+class AgreementChecker:
+    def __init__(self, grammar):
+        self.grammar = grammar
+
+    def check_agreement(self, sentence):
+        parse_tree = self.parse_sentence(sentence)
+        if parse_tree:
+            return self.traverse_tree(parse_tree)
+        else:
+            return False
+
+    def parse_sentence(self, sentence):
+        # Use your parser here to generate a parse tree for the sentence
+        # This can be a simple top-down or Earley parser based on the grammar
+        # For simplicity, let's assume a parse tree is given for the example
+        # You can replace this part with the actual parsing logic
+        parse_tree = self.generate_parse_tree(sentence)
+        return parse_tree
+
+    def generate_parse_tree(self, sentence):
+        # Replace this with your actual parsing logic
+        # For simplicity, let's assume a parse tree structure
+        # You may use an Earley parser or any other parsing technique
+        # based on the provided grammar
+        return None
+
+    def traverse_tree(self, node):
+        if node.label in self.grammar:
+            rule = self.grammar[node.label][0]
+            for i, child in enumerate(node.children):
+                if not self.check_agreement_for_rule(rule, i, child):
+                    return False
+            return True
+        else:
+            return True  # Terminal nodes do not need agreement check
+
+    def check_agreement_for_rule(self, rule, index, node):
+        # Check agreement based on the rule and the current node
+        if rule[index] == 'N' and node.label == 'Noun':
+            # Replace 'N' and 'Noun' with your actual non-terminal and terminal symbols
+            return True  # Agreement is satisfied for this rule and node
+        elif rule[index] == 'V' and node.label == 'Verb':
+            # Replace 'V' and 'Verb' with your actual non-terminal and terminal symbols
+            return True  # Agreement is satisfied for this rule and node
+        # Add more conditions as needed based on your grammar
+
+        # If no specific conditions match, assume agreement is satisfied
+        return True
+
+# Example usage:
+grammar = {
+    "S": [["NP", "VP"]],
+    "NP": [["Det", "N"]],
+    "VP": [["V", "NP"]],
+    "Det": [["the"], ["a"]],
+    "N": [["cat"], ["dog"]],
+    "V": [["chases"], ["eats"]]
+}
+
+agreement_checker = AgreementChecker(grammar)
+
+# Example sentences to check
+sentence1 = ["the", "cat", "chases", "a", "dog"]
+sentence2 = ["a", "dog", "eats", "the", "cat"]
+
+result1 = agreement_checker.check_agreement(sentence1)
+result2 = agreement_checker.check_agreement(sentence2)
+
+print("Sentence 1 Agreement:", result1)
+print("Sentence 2 Agreement:", result2)
