@@ -1,0 +1,37 @@
+import nltk
+
+class PCFGParser:
+    def __init__(self, pcfg):
+        self.pcfg = pcfg
+
+    def parse_sentence(self, sentence):
+        parser = nltk.EarleyChartParser(self.pcfg)
+        chart = list(parser.chart_parse(sentence))
+        
+        # Extract the most probable parse tree
+        parse_tree = chart[0].get_tree()
+        return parse_tree
+
+# Example usage:
+pcfg = nltk.PCFG.fromstring("""
+    S -> NP VP [1.0]
+    NP -> Det N [0.7] | ProperN [0.3]
+    VP -> V NP [0.9] | VP PP [0.1]
+    Det -> 'the' [0.6] | 'a' [0.4]
+    N -> 'cat' [0.4] | 'dog' [0.6]
+    ProperN -> 'John' [1.0]
+    V -> 'chases' [0.3] | 'eats' [0.7]
+    PP -> P NP [1.0]
+    P -> 'with' [0.5] | 'in' [0.5]
+""")
+
+pcfg_parser = PCFGParser(pcfg)
+
+# Example sentence
+sentence = "the cat chases John with a dog"
+
+# Parse the sentence and get the most probable parse tree
+parse_tree = pcfg_parser.parse_sentence(sentence.split())
+
+# Display the parse tree
+parse_tree.pretty_print()
