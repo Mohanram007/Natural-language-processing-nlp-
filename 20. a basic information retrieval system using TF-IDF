@@ -1,0 +1,41 @@
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import linear_kernel
+
+# Sample documents
+documents = [
+    "The cat in the hat.",
+    "The quick brown fox jumps over the lazy dog.",
+    "A bird in the hand is worth two in the bush.",
+    "The early bird catches the worm."
+]
+
+# Query
+query = "The cat and the fox."
+
+def tfidf_ir_system(documents, query):
+    # Create a TF-IDF vectorizer
+    tfidf_vectorizer = TfidfVectorizer()
+
+    # Calculate TF-IDF scores for the documents
+    tfidf_matrix = tfidf_vectorizer.fit_transform(documents)
+
+    # Calculate TF-IDF scores for the query
+    query_tfidf = tfidf_vectorizer.transform([query])
+
+    # Calculate cosine similarity between the query and documents
+    cosine_similarities = linear_kernel(query_tfidf, tfidf_matrix).flatten()
+
+    # Rank documents based on similarity scores
+    document_ranking = sorted(list(enumerate(cosine_similarities)), key=lambda x: x[1], reverse=True)
+
+    return document_ranking
+
+# Run the information retrieval system
+ranking = tfidf_ir_system(documents, query)
+
+# Display the ranked documents
+print("Query:", query)
+print("Ranked Documents:")
+for rank, (doc_index, score) in enumerate(ranking, start=1):
+    print(f"Rank {rank}: Document {doc_index + 1} (Similarity Score: {score:.4f})")
+    print(f"   '{documents[doc_index]}'\n")
