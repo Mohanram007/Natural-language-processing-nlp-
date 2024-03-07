@@ -1,0 +1,29 @@
+from pyparsing import Word, alphas, infixNotation, opAssoc, Literal, Forward
+
+# Define FOPC grammar using pyparsing
+identifier = Word(alphas, alphas + "_", asKeyword=True)
+variable = Word(alphas, alphas + "_")
+quantifier = Literal("forall") | Literal("exists")
+quantified_expr = Forward()
+
+predicate = identifier + "(" + variable + ")"
+term = variable | predicate
+expression = term + infixNotation(Word("&|", max=1),
+                                 [("->", 2, opAssoc.LEFT),
+                                  ("<->", 2, opAssoc.LEFT)])
+
+quantifier_expr = quantifier + variable + "(" + quantified_expr + ")"
+quantified_expr << (quantifier_expr | expression)
+
+# Parse FOPC expression
+def parse_fopc(expression):
+    return quantified_expr.parseString(expression, parseAll=True)
+
+# Example usage:
+fopc_expression = "forall x (P(x) -> Q(x))"
+
+try:
+    parsed_result = parse_fopc(fopc_expression)
+    print("Parsing successful! Parsed result:", parsed_result.asList())
+except Exception as e:
+    print(f"Parsing failed: {e}")
