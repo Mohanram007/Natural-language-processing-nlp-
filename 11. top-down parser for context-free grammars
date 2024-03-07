@@ -1,0 +1,53 @@
+class SimpleParser:
+    def __init__(self, grammar):
+        self.grammar = grammar
+        self.tokens = []
+        self.current_token = None
+
+    def set_input(self, input_tokens):
+        self.tokens = input_tokens
+        self.current_token = self.tokens.pop(0) if self.tokens else None
+
+    def match(self, expected_token):
+        if self.current_token == expected_token:
+            self.current_token = self.tokens.pop(0) if self.tokens else None
+        else:
+            raise Exception(f"Expected {expected_token}, but got {self.current_token}")
+
+    def parse(self, non_terminal):
+        if non_terminal in self.grammar:
+            for production in self.grammar[non_terminal]:
+                try:
+                    self.parse_production(production)
+                    return True
+                except Exception:
+                    pass
+            raise Exception(f"No matching production found for {non_terminal}")
+        else:
+            raise Exception(f"Unknown non-terminal {non_terminal}")
+
+    def parse_production(self, production):
+        for symbol in production:
+            if symbol in self.grammar:
+                self.parse(symbol)
+            else:
+                self.match(symbol)
+
+# Example usage:
+grammar = {
+    "expr": [["term", "+", "expr"], ["term"]],
+    "term": [["factor", "*", "term"], ["factor"]],
+    "factor": [["(", "expr", ")"], ["number"]],
+    "number": [["0"], ["1"], ["2"], ["3"], ["4"], ["5"], ["6"], ["7"], ["8"], ["9"]]
+}
+
+parser = SimpleParser(grammar)
+
+input_tokens = ["1", "+", "2", "*", "3"]
+parser.set_input(input_tokens)
+
+try:
+    parser.parse("expr")
+    print("Parsing successful!")
+except Exception as e:
+    print(f"Parsing failed: {e}")
