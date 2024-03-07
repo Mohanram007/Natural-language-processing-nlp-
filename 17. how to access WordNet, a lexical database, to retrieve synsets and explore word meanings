@@ -1,0 +1,22 @@
+from nltk.corpus import wordnet
+
+def explore_word_meanings(word):
+    # Get synsets for the given word from WordNet
+    synsets = wordnet.synsets(word)
+
+    if not synsets:
+        print(f"No synsets found for the word '{word}'.")
+        return
+
+    print(f"Word: {word}\n")
+
+    # Explore meanings for each synset
+    for synset in synsets:
+        print(f"Synset: {synset.name()}")
+        print(f"Definition: {synset.definition()}")
+        print(f"Examples: {', '.join(synset.examples())}\n")
+
+# Example usage:
+word_to_explore = "play"
+explore_word_meanings(word_to_explore)
+
