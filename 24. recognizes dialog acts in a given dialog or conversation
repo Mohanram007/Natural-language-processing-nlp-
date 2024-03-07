@@ -1,0 +1,45 @@
+import nltk
+from nltk import word_tokenize
+from nltk import pos_tag
+
+nltk.download('punkt')
+
+def recognize_dialog_acts(utterances):
+    dialog_acts = []
+
+    for utterance in utterances:
+        tokens = word_tokenize(utterance)
+        pos_tags = pos_tag(tokens)
+
+        dialog_act = classify_dialog_act(pos_tags)
+        dialog_acts.append((utterance, dialog_act))
+
+    return dialog_acts
+
+def classify_dialog_act(pos_tags):
+    # Simple rule-based dialog act classification
+    # You can extend or modify this function based on your specific needs
+    if any(tag in ['VB', 'VBP', 'VBZ'] for (_, tag) in pos_tags):
+        return 'Statement'
+    elif any(tag in ['MD'] for (_, tag) in pos_tags):
+        return 'Question'
+    else:
+        return 'Other'
+
+# Example usage:
+utterances = [
+    "I love hiking in the mountains.",
+    "Can you help me with this problem?",
+    "The weather is beautiful today.",
+    "How are you doing?",
+    "Let's go grab some lunch."
+]
+
+dialog_acts_result = recognize_dialog_acts(utterances)
+
+# Display the recognized dialog acts
+print("Recognized Dialog Acts:")
+for utterance, dialog_act in dialog_acts_result:
+    print(f"Utterance: '{utterance}'")
+    print(f"Dialog Act: {dialog_act}")
+    print()
