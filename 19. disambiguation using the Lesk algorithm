@@ -1,0 +1,30 @@
+from nltk.corpus import wordnet
+from nltk.tokenize import word_tokenize
+from nltk.wsd import lesk
+import nltk
+
+nltk.download('punkt')
+nltk.download('wordnet')
+
+def perform_lesk(sentence, target_word):
+    # Tokenize the sentence
+    tokens = word_tokenize(sentence)
+
+    # Use the Lesk algorithm to disambiguate the sense of the target word
+    sense = lesk(tokens, target_word)
+
+    return sense
+
+# Example usage:
+sentence = "I went to the bank to deposit some money."
+target_word = "bank"
+
+sense = perform_lesk(sentence, target_word)
+
+if sense:
+    print(f"Word: {target_word}")
+    print(f"Sense: {sense.name()}")
+    print(f"Definition: {sense.definition()}")
+    print(f"Examples: {sense.examples()}")
+else:
+    print(f"No sense found for the word '{target_word}'.")
