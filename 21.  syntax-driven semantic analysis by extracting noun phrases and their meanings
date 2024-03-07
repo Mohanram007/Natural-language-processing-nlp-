@@ -1,0 +1,41 @@
+import spacy
+
+def syntax_semantic_analysis(sentence):
+    # Load the English NLP model from spaCy
+    nlp = spacy.load("en_core_web_sm")
+
+    # Process the input sentence
+    doc = nlp(sentence)
+
+    # Extract noun phrases and their meanings
+    noun_phrases = []
+    for chunk in doc.noun_chunks:
+        noun_phrase = {
+            "text": chunk.text,
+            "root": chunk.root.text,
+            "root_pos": chunk.root.pos_,
+            "root_dep": chunk.root.dep_,
+            "meaning": get_noun_meaning(chunk.root.text)
+        }
+        noun_phrases.append(noun_phrase)
+
+    return noun_phrases
+
+def get_noun_meaning(noun):
+    # Replace this function with your own logic to get the meaning of a noun
+    # For simplicity, a dummy function is used in this example
+    # You can use WordNet, knowledge bases, or other resources to obtain meanings
+    return f"Dummy meaning for {noun}"
+
+# Example usage:
+input_sentence = "The quick brown fox jumps over the lazy dog."
+
+result = syntax_semantic_analysis(input_sentence)
+
+# Display the extracted noun phrases and their meanings
+print("Noun Phrases and Meanings:")
+for noun_phrase in result:
+    print(f"Text: {noun_phrase['text']}")
+    print(f"Root: {noun_phrase['root']} (POS: {noun_phrase['root_pos']}, DEP: {noun_phrase['root_dep']})")
+    print(f"Meaning: {noun_phrase['meaning']}")
+    print()
